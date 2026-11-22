@@ -3,9 +3,13 @@ import { neighbors, coordinate } from "../../../shared/geometry";
 import { logAction } from "../../../shared/initial";
 import { revealArea } from "../lib/flood";
 import { mayAct } from "./expedition";
-export function revealCells(e: Expedition, ids: number[]): Expedition {
+export function revealCells(
+  e: Expedition,
+  ids: number[],
+  blocked?: ReadonlySet<number>,
+): Expedition {
   if (!mayAct(e) || !e.board.generated) return e;
-  const result = revealArea(e.board, ids);
+  const result = revealArea(e.board, ids, blocked);
   if (!result.opened.length) return e;
   let shield = e.shield;
   let damage = 0;
@@ -63,7 +67,11 @@ export function cycleMark(e: Expedition, id: number): Expedition {
     `${coordinate(id, e.board.width)}：${mark === "flag" ? "插下危险旗标" : mark === "question" ? "改为疑问标记" : "移除标记"}。`,
   );
 }
-export function chordCells(e: Expedition, id: number): Expedition {
+export function chordCells(
+  e: Expedition,
+  id: number,
+  blocked?: ReadonlySet<number>,
+): Expedition {
   const c = e.board.cells[id];
   if (!mayAct(e) || !c?.revealed || c.mine || !c.adjacent) return e;
   const around = neighbors(id, e.board.width, e.board.height);
@@ -74,7 +82,11 @@ export function chordCells(e: Expedition, id: number): Expedition {
   return revealCells(
     e,
     around.filter(
-      (i) => e.board.cells[i].mark !== "flag" && !e.board.cells[i].revealed,
+      (i) =>
+        e.board.cells[i].mark !== "flag" &&
+        !e.board.cells[i].revealed &&
+        !blocked?.has(i),
     ),
+    blocked,
   );
 }

@@ -6,8 +6,9 @@ export function inspectCell(
   e: Expedition,
   id: number,
   tool: "probe" | "flare",
+  blocked?: ReadonlySet<number>,
 ): { expedition: Expedition; reveal: number[] } {
-  if (!canTarget(e, id) || !hasTool(e, tool))
+  if (!canTarget(e, id) || !hasTool(e, tool) || blocked?.has(id))
     return { expedition: e, reveal: [] };
   const c = e.board.cells[id];
   if (c.intel !== "unknown" && (tool === "probe" || c.intel === "danger"))

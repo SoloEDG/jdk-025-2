@@ -3,22 +3,33 @@ import {
   Lightbulb,
   TriangleAlert,
   ArrowUpRight,
+  Brush,
+  DoorClosed,
+  DoorOpen,
 } from "lucide-react";
-import type { Analysis, Expedition } from "../../../shared/types";
+import type {
+  Analysis,
+  Expedition,
+  MuralState,
+} from "../../../shared/types";
 import { coordinate } from "../../../shared/geometry";
 import { inferenceSummary } from "../model/notes";
 export function InferencePanel({
   analysis: a,
   expedition: e,
+  mural,
   showHints,
   onHints,
   onLocate,
+  onMural,
 }: {
   analysis: Analysis;
   expedition: Expedition;
+  mural?: MuralState;
   showHints: boolean;
   onHints: () => void;
   onLocate: (id: number) => void;
+  onMural?: () => void;
 }) {
   return (
     <section className="inference-panel">
@@ -29,7 +40,7 @@ export function InferencePanel({
       </div>
       <div className={"logic-status " + (a.conflicts.length ? "conflict" : "")}>
         <Lightbulb size={16} />
-        <p>{inferenceSummary(a, e)}</p>
+        <p>{inferenceSummary(a, e, mural)}</p>
       </div>
       <div className="logic-counts">
         <div>
@@ -69,6 +80,28 @@ export function InferencePanel({
         <TriangleAlert size={11} />
         推断以你的旗标为条件，不会读取暗格答案。
       </p>
+      {mural && onMural && (
+        <button className="mural-crosslink" onClick={onMural}>
+          {mural.door === "open" ? (
+            <DoorOpen size={13} />
+          ) : (
+            <DoorClosed size={13} />
+          )}
+          <span>
+            壁画修复室
+            <small>
+              {mural.door === "open"
+                ? "封门已开 · 耳室通路开放"
+                : mural.proofStale
+                  ? "旧证明失效，需重新核对"
+                  : mural.proof.status === "unique"
+                    ? "已取得唯一补全，可确认封门"
+                    : `暂存 ${mural.layout.length} 片 · 尚未证实整幅`}
+            </small>
+          </span>
+          <Brush size={12} />
+        </button>
+      )}
     </section>
   );
 }

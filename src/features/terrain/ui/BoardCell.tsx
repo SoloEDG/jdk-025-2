@@ -14,6 +14,7 @@ export function BoardCell({
   terminal,
   hint,
   selected,
+  sealed,
   onOpen,
   onMark,
   onChord,
@@ -24,6 +25,7 @@ export function BoardCell({
   terminal: boolean;
   hint: "safe" | "danger" | undefined;
   selected: boolean;
+  sealed: boolean;
   onOpen: () => void;
   onMark: () => void;
   onChord: () => void;
@@ -48,7 +50,9 @@ export function BoardCell({
     <ShieldCheck size={15} />
   ) : null;
   let label = `${coordinate(c.id, width)}，`;
-  label += hazard
+  label += sealed
+    ? "位于封闭耳室，需先完成壁画修复"
+    : hazard
     ? "已发现陷阱"
     : c.revealed
       ? `已探索，邻近危险${c.adjacent}${c.relic ? "，发现文物" : ""}`
@@ -76,6 +80,7 @@ export function BoardCell({
         c.mark === "flag" ? "flagged" : "",
         c.intel !== "unknown" ? "intel-" + c.intel : "",
         hint ? "hint-" + hint : "",
+        sealed && !c.revealed ? "sealed" : "",
         selected ? "tile-selected" : "",
         c.revealed && !c.mine ? "number-" + c.adjacent : "",
       ].join(" ")}

@@ -11,6 +11,7 @@ import {
   LogOut,
   X,
   Save,
+  Brush,
 } from "lucide-react";
 import type { Difficulty } from "../shared/types";
 import { isTerminal } from "../shared/initial";
@@ -24,17 +25,22 @@ import { ActionBar, ProgressStrip } from "../features/exploration";
 import { analyze, InferencePanel } from "../features/inference";
 import { ToolPanel } from "../features/tools";
 import { ChroniclePanel, ResultPanel } from "../features/chronicle";
+import { MuralRoom } from "../features/mural";
+import { createMuralPuzzle } from "../features/mural/model/puzzle";
 import { useGame } from "./useGame";
 import { GuideDialog } from "./ui/GuideDialog";
 import { LaunchDialog } from "./ui/LaunchDialog";
 export function App() {
   const { state, send, saved } = useGame();
   const e = state.doc.expedition;
+  const mural = state.doc.mural;
   const [help, setHelp] = useState(false);
   const [launch, setLaunch] = useState<Difficulty | null>(null);
   const [extract, setExtract] = useState(false);
   const [hints, setHints] = useState(false);
+  const [view, setView] = useState<"map" | "mural">("map");
   const analysis = useMemo(() => analyze(publicBoard(e.board)), [e.board]);
+  const puzzle = useMemo(() => createMuralPuzzle(e.board), [e.board]);
   const r = region(e.board.difficulty);
   const report = state.doc.archive.reports.find((v) => v.id === e.id);
   return (
@@ -52,10 +58,24 @@ export function App() {
           </span>
         </a>
         <nav aria-label="主导航">
-          <a className="nav-active" href="#map">
+          <button
+            className={view === "map" ? "nav-active" : ""}
+            aria-pressed={view === "map"}
+            onClick={() => setView("map")}
+          >
             <Map size={14} />
             遗迹探索
-          </a>
+          </button>
+          <button
+            className={view === "mural" ? "nav-active" : ""}
+            aria-pressed={view === "mural"}
+            onClick={() => setView("mural")}
+          >
+            <Brush size={14} />
+            壁画修复室
+            {mural.door === "open" && <i className="nav-dot open" />}
+            {mural.proofStale && <i className="nav-dot stale" />}
+          </button>
           <a href="#chronicle">
             <BookOpen size={14} />
             探险手记
@@ -106,56 +126,73 @@ export function App() {
               <span className="seed-tip">同一种子，同一段未知。</span>
             </div>
           </aside>
-          <div className="center-column" id="map">
-            <ProgressStrip expedition={e} />
-            <BoardView
-              expedition={e}
-              analysis={analysis}
-              showHints={hints}
-              send={send}
-            />
-            <ActionBar
-              expedition={e}
-              send={send}
-              onExtract={() => setExtract(true)}
-            />
-            {report && (
-              <ResultPanel
-                report={report}
-                onNew={() => setLaunch(e.board.difficulty)}
+          {view === "mural" ? (
+            <div className="center-column mural-center">
+              <MuralRoom
+                expedition={e}
+                board={publicBoard(e.board)}
+                mural={mural}
+                puzzle={puzzle}
+                send={send}
+                onOpenMap={() => setView("map")}
               />
-            )}
-            <div className="map-note">
-              <Diamond size={14} />
-              <p>
-                {e.mode === "probe"
-                  ? "探针已就绪，点击未探索且无旗标的石板，确认一格信息。"
-                  : e.mode === "flare"
-                    ? "火把已就绪，点击未探索石板；安全则揭开，危险则仅确认。"
-                    : r.description}
-                <span>
-                  {e.mode === "reveal"
-                    ? "谨慎的每一步，都会让故事更完整。"
-                    : e.mode === "mark"
-                      ? "旗标是你的判断，疑问保留未知；并不证明真实危险。"
-                      : "使用后自动回到探索模式，取消可点击「探索」。"}
-                </span>
-              </p>
-              <span className="note-mark">✦</span>
             </div>
-            <div className="save-strip">
-              <Save size={12} />
-              <span>自动保存地图、道具与发现 · 随时回来继续</span>
-              <small>LOCAL FIELD JOURNAL</small>
+          ) : (
+            <div className="center-column" id="map">
+              <ProgressStrip expedition={e} />
+              <BoardView
+                expedition={e}
+                analysis={analysis}
+                showHints={hints}
+                sealedCells={mural.door === "sealed" ? mural.sealedCells : []}
+                send={send}
+              />
+              <ActionBar
+                expedition={e}
+                send={send}
+                onExtract={() => setExtract(true)}
+              />
+              {report && (
+                <ResultPanel
+                  report={report}
+                  onNew={() => setLaunch(e.board.difficulty)}
+                />
+              )}
+              <div className="map-note">
+                <Diamond size={14} />
+                <p>
+                  {e.mode === "probe"
+                    ? "探针已就绪，点击未探索且无旗标的石板，确认一格信息。"
+                    : e.mode === "flare"
+                      ? "火把已就绪，点击未探索石板；安全则揭开，危险则仅确认。"
+                      : r.description}
+                  <span>
+                    {e.mode === "reveal"
+                      ? "谨慎的每一步，都会让故事更完整。"
+                      : e.mode === "mark"
+                        ? "旗标是你的判断，疑问保留未知；并不证明真实危险。"
+                        : "使用后自动回到探索模式，取消可点击「探索」。"}
+                  </span>
+                </p>
+                <span className="note-mark">✦</span>
+              </div>
+              <div className="save-strip">
+                <Save size={12} />
+                <span>自动保存地图、道具与发现 · 随时回来继续</span>
+                <small>LOCAL FIELD JOURNAL</small>
+              </div>
             </div>
-          </div>
+          )}
           <aside className="right-column">
             <InferencePanel
               analysis={analysis}
               expedition={e}
+              mural={mural}
               showHints={hints}
               onHints={() => setHints(!hints)}
+              onMural={() => setView("mural")}
               onLocate={(id) => {
+                setView("map");
                 setHints(true);
                 document.getElementById("tile-" + id)?.focus();
                 document

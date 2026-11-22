@@ -3,6 +3,7 @@ import { neighbors } from "../../../shared/geometry";
 export function revealArea(
   board: Board,
   ids: number[],
+  blocked?: ReadonlySet<number>,
 ): { board: Board; opened: number[]; hit: number[] } {
   const cells = board.cells.map((c) => ({ ...c }));
   const queue = [...ids];
@@ -15,6 +16,8 @@ export function revealArea(
     seen.add(id);
     const c = cells[id];
     if (!c || c.revealed || c.mark === "flag") continue;
+    // 封闭的耳室不会被泛洪揭开，避免绕过封门。
+    if (blocked?.has(id)) continue;
     c.revealed = true;
     c.mark = "none";
     opened.push(id);
@@ -24,7 +27,7 @@ export function revealArea(
     }
     if (c.adjacent === 0)
       for (const next of neighbors(id, board.width, board.height))
-        if (!seen.has(next)) queue.push(next);
+        if (!seen.has(next) && !blocked?.has(next)) queue.push(next);
   }
   return { board: { ...board, cells }, opened, hit };
 }

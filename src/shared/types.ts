@@ -65,10 +65,82 @@ export interface Archive {
   discoveries: Partial<Record<RelicId, number>>;
   totalScore: number;
 }
+export type MuralDoor = "sealed" | "open";
+export interface MuralPlacementState {
+  fragment: string;
+  x: number;
+  y: number;
+  rot: number;
+  flip: boolean;
+}
+export interface MuralEvidenceState {
+  id: string;
+  claimId: string;
+  kind: "orientation" | "strata" | "join";
+  label: string;
+  sourceLabel: string;
+  sourceCell: number | null;
+  relic: RelicId | null;
+  accepted: boolean;
+  fragment?: string;
+  a?: string;
+  b?: string;
+  relation?: "adjacent" | "separate";
+  facing?: 0 | 1 | 2 | 3;
+  band?: "upper" | "lower";
+}
+export type MuralProofStatus =
+  | "unique"
+  | "candidate"
+  | "unproven"
+  | "conflict";
+export interface MuralConflictView {
+  id: string;
+  label: string;
+  reason: string;
+  fragment: string | null;
+}
+export interface MuralProofState {
+  status: MuralProofStatus;
+  distinct: number;
+  exhausted: boolean;
+  truncated: boolean;
+  example: MuralPlacementState[];
+  conflicts: MuralConflictView[];
+  claims: string[];
+  evidenceSources: number;
+  pinnedSignature: string;
+  evidenceFingerprint: string;
+  nodes: number;
+  checkedAt: number;
+  localSeams: {
+    cells: number;
+    total: number;
+    matched: number;
+    mismatched: number;
+    openBoundary: number;
+    overlaps: number;
+    outOfBounds: number;
+  };
+}
+export interface MuralState {
+  door: MuralDoor;
+  layout: MuralPlacementState[];
+  pins: MuralPlacementState[];
+  confirmed: MuralPlacementState[] | null;
+  proof: MuralProofState;
+  evidence: MuralEvidenceState[];
+  proofStale: boolean;
+  staleReason: string;
+  rewarded: boolean;
+  openedAt: number | null;
+  sealedCells: number[];
+}
 export interface GameDocument {
   version: 1;
   expedition: Expedition;
   archive: Archive;
+  mural: MuralState;
 }
 export interface PublicCell {
   id: number;

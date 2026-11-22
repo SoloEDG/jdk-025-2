@@ -9,11 +9,13 @@ export function BoardView({
   expedition: e,
   analysis,
   showHints,
+  sealedCells,
   send,
 }: {
   expedition: Expedition;
   analysis: Analysis;
   showHints: boolean;
+  sealedCells: number[];
   send: (c: Command) => void;
 }) {
   const [focus, setFocus] = useState(44);
@@ -25,6 +27,7 @@ export function BoardView({
       : [],
   );
   const activeFocus = Math.min(focus, e.board.cells.length - 1);
+  const sealedSet = new Set(sealedCells);
   const navigate = (id: number, key: string) => {
     const x = id % e.board.width,
       y = Math.floor(id / e.board.width);
@@ -126,6 +129,7 @@ export function BoardView({
                 width={e.board.width}
                 terminal={isTerminal(e.status)}
                 hint={hints.get(c.id)}
+                sealed={sealedSet.has(c.id)}
                 selected={c.id === activeFocus}
                 onOpen={() => {
                   setFocus(c.id);
@@ -178,6 +182,10 @@ export function BoardView({
         <span>
           <Gem size={12} />
           遗迹文物
+        </span>
+        <span>
+          <i className="legend-sealed" />
+          封门耳室
         </span>
         <small>右键标记 · 双击数字快速展开</small>
       </div>

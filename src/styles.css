@@ -2413,3 +2413,865 @@ footer > span:last-child {
     animation: notice-out 1ms 6s forwards !important;
   }
 }
+
+/* ---------- mural restoration room ---------- */
+.app-header nav button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  color: #829487;
+  font-size: 11px;
+  position: relative;
+  padding: 0;
+  align-self: stretch;
+}
+.app-header nav button.nav-active {
+  color: #d1bb87;
+}
+.nav-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #b7a06b;
+}
+.nav-dot.open {
+  background: #8fbe91;
+}
+.nav-dot.stale {
+  background: #d29b7e;
+}
+.mural-center {
+  display: block;
+}
+.mural-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 22px;
+  align-items: start;
+}
+.mural-room {
+  border: 1px solid #3b4b3a;
+  background: linear-gradient(160deg, #22302550, #18261d);
+  border-radius: 4px;
+  padding: 20px 20px 18px;
+}
+.mural-heading {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #33452f;
+}
+.mural-heading > span {
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+.mural-intro {
+  font-size: 10px;
+  line-height: 1.95;
+  color: #8fa37c;
+  margin: 13px 0 16px;
+}
+.mural-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid #3b4936;
+  border-radius: 3px;
+  background: #26332270;
+  margin-bottom: 15px;
+}
+.mural-stats > div {
+  padding: 12px 8px;
+  text-align: center;
+  border-right: 1px solid #3b4936;
+}
+.mural-stats > div:last-child {
+  border: 0;
+}
+.mural-stats b {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 25px;
+  font-weight: 400;
+  color: #b6c096;
+  letter-spacing: 1px;
+  display: block;
+}
+.mural-stats b small {
+  font-size: 10px;
+  color: #78906a;
+}
+.mural-stats span {
+  font-size: 7px;
+  color: #6d8965;
+  display: block;
+  margin-top: 4px;
+}
+.mural-stats > div.open b {
+  color: #96c39a;
+}
+.mural-warning {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border: 1px solid #a3794e;
+  background: #5c432755;
+  color: #dcb489;
+  padding: 10px 12px;
+  border-radius: 3px;
+  margin-bottom: 13px;
+}
+.mural-warning svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.mural-warning p {
+  font-size: 9px;
+  line-height: 1.85;
+}
+.mural-proof {
+  border: 1px solid #3a4e38;
+  border-radius: 3px;
+  padding: 12px 13px;
+  background: #1b2b2090;
+}
+.mural-proof.unique {
+  border-color: #7e9a63;
+  background: #2c3d2455;
+}
+.mural-proof.candidate {
+  border-color: #a58b58;
+}
+.mural-proof.conflict {
+  border-color: #a87850;
+  background: #402f2055;
+}
+.proof-line {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+.proof-line > svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #a9b17d;
+}
+.proof-line.unique > svg {
+  color: #9fc393;
+}
+.proof-line.conflict > svg {
+  color: #d29b7e;
+}
+.proof-line span {
+  font-size: 10px;
+  line-height: 1.8;
+  color: #b0bd98;
+}
+.proof-line small {
+  display: block;
+  font-size: 8px;
+  line-height: 1.8;
+  color: #7f9872;
+  margin-top: 4px;
+}
+.mural-seam-readout {
+  font: 8px var(--mono);
+  color: #6f8666;
+  letter-spacing: 0.3px;
+  margin: 9px 0 0 24px;
+}
+.mural-caution {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  font-size: 8px;
+  line-height: 1.85;
+  color: #c9a475;
+  margin: 9px 0 0 24px;
+}
+.mural-caution svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.mural-conflicts {
+  margin-top: 14px;
+  border: 1px dashed #8b6540;
+  padding: 10px 12px;
+  border-radius: 3px;
+}
+.mural-subhead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  letter-spacing: 0.8px;
+  color: #b0a078;
+  font-family: var(--mono);
+}
+.conflict-row {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  margin-top: 8px;
+  color: #d0a984;
+}
+.conflict-row svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.conflict-row strong {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+}
+.conflict-row small {
+  display: block;
+  font-size: 8px;
+  color: #9d8368;
+  margin-top: 3px;
+  line-height: 1.7;
+}
+.mural-example {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 13px;
+  padding: 10px 12px;
+  border: 1px solid #66724a;
+  background: #2c3a2355;
+  border-radius: 3px;
+}
+.mural-example > svg {
+  color: #b5b47e;
+  flex-shrink: 0;
+}
+.mural-example strong {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+  color: #bcc196;
+}
+.mural-example small {
+  display: block;
+  font-size: 7px;
+  color: #809371;
+  line-height: 1.7;
+  margin-top: 3px;
+}
+.mural-example .outline-button {
+  margin-left: auto;
+  white-space: nowrap;
+  padding: 7px 9px;
+  font-size: 8px;
+}
+.fragment-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+.fragment-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-align: left;
+  padding: 9px 10px;
+  border: 1px solid #3d4c39;
+  background: #1d2e23;
+  border-radius: 3px;
+  position: relative;
+  color: #9eab8a;
+}
+.fragment-card.locked {
+  opacity: 0.42;
+}
+.fragment-card.placed {
+  border-color: #6d7c4c;
+  background: #2c3b2755;
+}
+.fragment-card.selected {
+  border-color: #c1b070;
+  box-shadow: 0 0 0 1px #c1b07044 inset;
+}
+.fragment-card.pinned {
+  border-color: #a7794f;
+}
+.fragment-symbol {
+  width: 30px;
+  height: 32px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  color: #c8bb83;
+  border: 1px solid #5b6844;
+  background: #2b3a2555;
+  border-radius: 2px;
+}
+.fragment-meta {
+  min-width: 0;
+}
+.fragment-meta strong {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: #b9c3a0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fragment-meta small {
+  display: block;
+  font-size: 7px;
+  color: #778f6b;
+  margin-top: 5px;
+  line-height: 1.6;
+}
+.pin-badge,
+.ok-badge {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  color: #c9a475;
+}
+.ok-badge {
+  color: #8fb08a;
+}
+.fragment-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #3c4d36;
+  border-radius: 3px;
+  background: #192a1e;
+}
+.fragment-tools-title {
+  font-size: 9px;
+  color: #b5c09b;
+  margin-right: auto;
+}
+.fragment-tools-title small {
+  display: block;
+  font-size: 7px;
+  color: #74896b;
+  margin-top: 3px;
+}
+.fragment-tools-hint {
+  font-size: 8px;
+  color: #7d906f;
+  line-height: 1.7;
+}
+.mini-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: #25362350;
+  border: 1px solid #4b5d3e;
+  border-radius: 2px;
+  font-size: 8px;
+  color: #a5b28b;
+}
+.mini-action.on {
+  background: #4a5530;
+  border-color: #b0a469;
+  color: #d0c28c;
+}
+.mini-action.danger {
+  color: #c19a76;
+  border-color: #6d5540;
+}
+.mural-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+.mural-actions .outline-button {
+  padding: 9px 12px;
+  font-size: 9px;
+}
+.mural-actions .primary {
+  margin-left: auto;
+  padding: 10px 15px;
+  font-size: 9px;
+}
+.mural-foot {
+  font-size: 8px;
+  color: #728964;
+  margin-top: 12px;
+  line-height: 1.8;
+}
+.mural-side {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.mural-frame-panel,
+.mural-evidence-panel,
+.mural-sealed-panel {
+  border: 1px solid #3c4c38;
+  background: #1b2b21;
+  border-radius: 4px;
+  padding: 15px 14px;
+}
+.mural-frame {
+  display: grid;
+  gap: 5px;
+  margin-top: 13px;
+}
+.mural-cell {
+  position: relative;
+  aspect-ratio: 1.05;
+  border: 1px dashed #45583b;
+  border-radius: 2px;
+  background: #17271b;
+  color: #6d8361;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  overflow: hidden;
+  padding: 2px;
+}
+.mural-cell.empty:hover {
+  border-color: #a69f63;
+  background: #243522;
+}
+.mural-cell.filled {
+  border-style: solid;
+  border-color: #6b7650;
+  background: linear-gradient(140deg, #34472c, #263a25);
+  color: #c5bd8b;
+}
+.mural-cell.pinned {
+  border-color: #b8895a;
+  box-shadow: 0 0 0 1px #b8895a55 inset;
+}
+.mural-cell.selected {
+  border-color: #d8c47d;
+}
+.mural-symbol {
+  font-size: 20px;
+  line-height: 1;
+  color: #cabd85;
+}
+.mural-cell-label {
+  font-size: 6px;
+  letter-spacing: 0.3px;
+  color: #92a17c;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.mural-empty-mark {
+  font-size: 15px;
+  color: #3e5638;
+}
+.edge-marks i {
+  position: absolute;
+  background: #b48b5e;
+}
+.edge-marks i.outer {
+  background: #6f8a5c;
+}
+.edge-n {
+  left: 50%;
+  top: 0;
+  width: 8px;
+  height: 2px;
+  transform: translateX(-50%);
+}
+.edge-s {
+  left: 50%;
+  bottom: 0;
+  width: 8px;
+  height: 2px;
+  transform: translateX(-50%);
+}
+.edge-e {
+  top: 50%;
+  right: 0;
+  width: 2px;
+  height: 8px;
+  transform: translateY(-50%);
+}
+.edge-w {
+  top: 50%;
+  left: 0;
+  width: 2px;
+  height: 8px;
+  transform: translateY(-50%);
+}
+.mural-place-hint {
+  font-size: 8px;
+  color: #8ba07a;
+  line-height: 1.8;
+  margin-top: 9px;
+}
+.mural-frame-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid #30432d;
+  margin-top: 11px;
+  padding-top: 10px;
+  color: #79906d;
+  font-size: 7px;
+}
+.mural-frame-foot span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mural-evidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+.evidence-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 8px;
+  border: 1px solid #344631;
+  border-radius: 2px;
+  background: #1a2a1e;
+}
+.evidence-row.locked {
+  opacity: 0.42;
+}
+.evidence-row.accepted {
+  border-color: #5f7145;
+  background: #29382255;
+}
+.evidence-row.late {
+  border-style: dashed;
+}
+.evidence-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #61754f;
+  flex-shrink: 0;
+}
+.evidence-row.accepted .evidence-dot {
+  background: #a9bc7e;
+}
+.evidence-copy {
+  min-width: 0;
+  flex: 1;
+}
+.evidence-copy strong {
+  display: block;
+  font-size: 8px;
+  font-weight: 500;
+  color: #adb992;
+  line-height: 1.5;
+}
+.evidence-copy small {
+  display: block;
+  font-size: 7px;
+  color: #708566;
+  margin-top: 3px;
+}
+.evidence-toggle {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid #4d5d3c;
+  background: #223020;
+  color: #8b9a78;
+  font-size: 7px;
+  padding: 4px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.evidence-toggle.on {
+  color: #c2cb9d;
+  border-color: #8d9a5f;
+  background: #3d4a2855;
+}
+.evidence-lock {
+  font-size: 7px;
+  color: #677c5c;
+  flex-shrink: 0;
+}
+.mural-evidence-note {
+  display: flex;
+  gap: 5px;
+  align-items: flex-start;
+  font-size: 7px;
+  color: #687f5f;
+  line-height: 1.8;
+  margin-top: 10px;
+}
+.mural-evidence-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.selected-evidence {
+  border-top: 1px solid #30432d;
+  margin-top: 10px;
+  padding-top: 9px;
+}
+.selected-evidence p {
+  font-size: 8px;
+  color: #8c9c7b;
+  line-height: 1.7;
+  margin-top: 7px;
+}
+.selected-evidence p.accepted {
+  color: #b3be97;
+}
+.selected-evidence p small {
+  display: block;
+  font-size: 7px;
+  color: #71866a;
+  margin-top: 3px;
+}
+.mural-sealed-panel > p {
+  font-size: 8px;
+  color: #849a77;
+  line-height: 1.85;
+  margin-top: 11px;
+}
+.sealed-cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin: 9px 0;
+}
+.sealed-cells span {
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  font: 7px var(--mono);
+  border: 1px solid #465a3d;
+  border-radius: 2px;
+  color: #80936e;
+  background: #1a2a1d;
+}
+.sealed-cells span.revealed {
+  border-color: #7d9665;
+  color: #b2c391;
+  background: #30412a;
+}
+.sealed-caution {
+  display: flex;
+  gap: 5px;
+  align-items: flex-start;
+  font-size: 7px;
+  color: #c9a475;
+  line-height: 1.8;
+  margin-bottom: 9px;
+}
+.sealed-caution svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.mural-sealed-panel .outline-button {
+  width: 100%;
+  font-size: 8px;
+  padding: 8px;
+  gap: 6px;
+}
+.mural-crosslink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 9px 10px;
+  border: 1px solid #4a5d3c;
+  border-radius: 3px;
+  background: #1c2d2055;
+  color: #a9b78b;
+  text-align: left;
+}
+.mural-crosslink > svg:first-child {
+  color: #b3a66e;
+  flex-shrink: 0;
+}
+.mural-crosslink > svg:last-child {
+  margin-left: auto;
+  color: #7e926d;
+}
+.mural-crosslink span {
+  font-size: 9px;
+  line-height: 1.4;
+}
+.mural-crosslink small {
+  display: block;
+  font-size: 7px;
+  color: #778d6b;
+  margin-top: 3px;
+}
+.mural-dialog {
+  max-width: 500px;
+}
+.mural-dialog > h2 {
+  font-size: 22px;
+}
+.mural-dialog > p {
+  font-size: 9px;
+  line-height: 1.95;
+  color: #8ea37c;
+  margin-top: 10px;
+}
+.mural-dialog ul {
+  margin: 11px 0 0;
+  padding-left: 17px;
+  color: #8fa47c;
+  font-size: 9px;
+  line-height: 2;
+}
+.dismantle-summary {
+  display: flex;
+  gap: 10px;
+  margin-top: 13px;
+}
+.dismantle-summary span {
+  flex: 1;
+  border: 1px solid #485c3c;
+  border-radius: 3px;
+  padding: 10px;
+  text-align: center;
+  font-size: 8px;
+  color: #849a74;
+}
+.dismantle-summary strong {
+  display: block;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 23px;
+  font-weight: 400;
+  color: #c7a879;
+}
+.dismantle-cells {
+  font: 8px var(--mono);
+  color: #bd9a74;
+  line-height: 1.9;
+  border-left: 2px solid #87613e;
+  padding-left: 8px;
+}
+.mural-dialog .dialog-actions {
+  margin-top: 18px;
+}
+.tile.sealed:not(.open) {
+  background: linear-gradient(140deg, #3a4030, #2c3226);
+  border-color: #6c6748;
+  color: #938b66;
+}
+.tile.sealed:not(.open):after {
+  content: "封";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  color: #9c9570;
+  background: #1b241899;
+  border-radius: 2px;
+}
+.board-legend .legend-sealed {
+  background: #3a4030;
+  border-color: #6c6748;
+}
+@media (max-width: 1180px) {
+  .mural-workspace {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 15px;
+  }
+  .mural-room {
+    padding: 16px 14px;
+  }
+  .fragment-strip {
+    gap: 6px;
+  }
+  .mural-stats b {
+    font-size: 21px;
+  }
+  .mural-stats span {
+    font-size: 6px;
+  }
+}
+@media (max-width: 960px) {
+  .mural-workspace {
+    grid-template-columns: 1fr;
+  }
+  .mural-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .mural-sealed-panel {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 640px) {
+  .mural-room {
+    padding: 13px 11px;
+  }
+  .mural-intro {
+    font-size: 9px;
+    margin: 10px 0 12px;
+  }
+  .mural-stats {
+    margin-bottom: 11px;
+  }
+  .mural-stats > div {
+    padding: 9px 3px;
+  }
+  .mural-stats b {
+    font-size: 19px;
+  }
+  .fragment-strip {
+    grid-template-columns: 1fr;
+  }
+  .fragment-meta small {
+    font-size: 7px;
+  }
+  .fragment-tools {
+    gap: 5px;
+  }
+  .fragment-tools-title {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  .mini-action {
+    padding: 6px 7px;
+  }
+  .mural-actions .primary {
+    margin-left: 0;
+    flex: 1;
+  }
+  .mural-actions .outline-button {
+    flex: 1;
+    padding: 8px 6px;
+    font-size: 8px;
+  }
+  .mural-side {
+    grid-template-columns: 1fr;
+  }
+  .mural-symbol {
+    font-size: 18px;
+  }
+  .mural-cell-label {
+    font-size: 5px;
+  }
+}
+.mural-frame-axis {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 11px 0 0;
+  text-align: center;
+  font: 7px var(--mono);
+  color: #637d59;
+}

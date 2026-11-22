@@ -1,4 +1,12 @@
-import { X, Pickaxe, Flag, ScanSearch } from "lucide-react";
+import {
+  X,
+  Pickaxe,
+  Flag,
+  ScanSearch,
+  Brush,
+  RotateCw,
+  Pin,
+} from "lucide-react";
 export function GuideDialog({ onClose }: { onClose: () => void }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -41,6 +49,30 @@ export function GuideDialog({ onClose }: { onClose: () => void }) {
           <p>
             <strong>有限道具</strong>
             探针确认一格但不揭开；火把安全揭开或确认危险；守护符石抵挡一次伤害。信息会进入推断；推断仍以你插的旗标为条件。
+          </p>
+        </div>
+        <div className="guide-step">
+          <Brush />
+          <p>
+            <strong>壁画修复室</strong>
+            把出土碎片按断口、纹样、朝向与地层关系拼进封门。碎片可旋转、翻面；有方向的铭文
+            不会把镜像当作等价。暂存不会解封，也不会重复占用同一片。
+          </p>
+        </div>
+        <div className="guide-step">
+          <RotateCw />
+          <p>
+            <strong>证明与封门</strong>
+            只逐缝检查会留下补不齐的死局，所以系统会在封门框上做整幅搜索。固定位置与证据
+            来源会参与等价判断；整幅平移不重复计数。搜完且唯一才算证明，否则只能说尚未证实。
+          </p>
+        </div>
+        <div className="guide-step">
+          <Pin />
+          <p>
+            <strong>新证据与出口</strong>
+            确认后封门开启，耳室通路与推断更新；已发现文物不重发奖励。拆除成品前会列出会
+            失去出口的区域，并可先撤回。刷新后占用、证据与封门状态都会恢复。
           </p>
         </div>
         <p className="guide-foot">

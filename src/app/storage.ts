@@ -4,9 +4,12 @@ import type {
   Archive,
   Board,
   Report,
+  MuralState,
 } from "../shared/types";
 import { neighbors } from "../shared/geometry";
 import { region } from "../features/terrain";
+import { createMuralPuzzle, fragmentSources } from "../features/mural/model/puzzle";
+import { hydrateMural } from "../features/mural/model/room";
 import { initialGame } from "./gameReducer";
 const key = "ruinfield-jdk025-v1";
 const obj = (v: unknown): v is Record<string, unknown> =>
@@ -178,6 +181,92 @@ function validArchive(v: unknown): v is Archive {
     int(v.totalScore)
   );
 }
+function validPlacement(
+  v: unknown,
+  cells: number,
+): v is { fragment: string; x: number; y: number; rot: number; flip: boolean } {
+  return (
+    obj(v) &&
+    typeof v.fragment === "string" &&
+    v.fragment.length <= 8 &&
+    int(v.x) &&
+    Number(v.x) < 8 &&
+    int(v.y) &&
+    Number(v.y) < 8 &&
+    int(v.rot) &&
+    Number(v.rot) < 4 &&
+    typeof v.flip === "boolean" &&
+    cells > 0
+  );
+}
+function validMural(v: unknown, board: Board): v is MuralState {
+  if (
+    !obj(v) ||
+    !["sealed", "open"].includes(String(v.door)) ||
+    !Array.isArray(v.layout) ||
+    v.layout.length > 12 ||
+    !v.layout.every((p) => validPlacement(p, board.cells.length)) ||
+    !Array.isArray(v.pins) ||
+    v.pins.length > 12 ||
+    !v.pins.every((p) => validPlacement(p, board.cells.length)) ||
+    !Array.isArray(v.evidence) ||
+    v.evidence.length > 32 ||
+    !v.evidence.every(
+      (e) =>
+        obj(e) &&
+        typeof e.id === "string" &&
+        typeof e.claimId === "string" &&
+        ["orientation", "strata", "join"].includes(String(e.kind)) &&
+        typeof e.label === "string" &&
+        typeof e.sourceLabel === "string" &&
+        (e.sourceCell === null ||
+          (int(e.sourceCell) &&
+            Number(e.sourceCell) < board.cells.length)) &&
+        (e.relic === null ||
+          ["sun", "vessel", "tablet"].includes(String(e.relic))) &&
+        typeof e.accepted === "boolean" &&
+        (e.fragment === undefined || typeof e.fragment === "string"),
+    ) ||
+    typeof v.rewarded !== "boolean" ||
+    typeof v.proofStale !== "boolean" ||
+    typeof v.staleReason !== "string" ||
+    !(v.confirmed === null || Array.isArray(v.confirmed)) ||
+    !Array.isArray(v.sealedCells) ||
+    !v.sealedCells.every(
+      (id) => int(id) && Number(id) < board.cells.length,
+    ) ||
+    !obj(v.proof)
+  )
+    return false;
+  // 占用约束：每片最多一幅；未出土碎片不能占用。
+  const puzzle = createMuralPuzzle(board);
+  const sources = fragmentSources(board);
+  const ids = new Set(puzzle.fragments.map((f) => f.id));
+  const layoutSeen = new Set<string>();
+  for (const p of v.layout) {
+    if (!ids.has(p.fragment) || layoutSeen.has(p.fragment)) return false;
+    layoutSeen.add(p.fragment);
+    const src = sources[p.fragment];
+    if (src === null || !board.cells[src]?.revealed) return false;
+  }
+  const pinSeen = new Set<string>();
+  for (const p of v.pins) {
+    if (!ids.has(p.fragment) || pinSeen.has(p.fragment)) return false;
+    pinSeen.add(p.fragment);
+    const placed = v.layout.find((q) => q.fragment === p.fragment);
+    if (
+      !placed ||
+      placed.x !== p.x ||
+      placed.y !== p.y ||
+      placed.rot !== p.rot ||
+      placed.flip !== p.flip
+    )
+      return false;
+  }
+  if (v.door !== "open" && v.confirmed) return false;
+  if (v.door === "open" && !Array.isArray(v.confirmed)) return false;
+  return true;
+}
 export function loadGame() {
   try {
     const raw = localStorage.getItem(key);
@@ -187,12 +276,24 @@ export function loadGame() {
       obj(v) &&
       v.version === 1 &&
       validExpedition(v.expedition) &&
-      validArchive(v.archive)
-    )
+      validArchive(v.archive) &&
+      validMural(
+        v.mural,
+        (v.expedition as unknown as Expedition).board,
+      )
+    ) {
+      const doc = v as unknown as GameDocument;
+      // 从地图/证据重新推导证明；占用、证据来源与封门状态原样保留。
+      doc.mural = hydrateMural(
+        doc.mural,
+        doc.expedition.board,
+        Date.now(),
+      );
       return {
-        doc: v as unknown as GameDocument,
-        notice: "已恢复上次探险，地图、道具与推断信息保持原样。",
+        doc,
+        notice: "已恢复上次探险，地图、道具、壁画占用与封门状态保持原样。",
       };
+    }
     return {
       ...initialGame(),
       notice: "存档格式或地图校验未通过，已保留原存档并开启临时探险。",
